@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyName>ColumnDesignTool</AssemblyName>
+    <RootNamespace>ColumnDesignTool</RootNamespace>
+    <Nullable>enable</Nullable>
+    <Platforms>x64</Platforms>
+    <ApplicationHighDpiMode>SystemAware</ApplicationHighDpiMode>
+  </PropertyGroup>
+
+  <!--
+    Optional: uncomment to add charting or export packages
+    <ItemGroup>
+      <PackageReference Include="OxyPlot.WindowsForms" Version="2.1.2" />
+      <PackageReference Include="ClosedXml"            Version="0.97.0" />
+      <PackageReference Include="iTextSharp"           Version="5.5.13.3" />
+    </ItemGroup>
+  -->
+
+  <!--
+    ETABS COM interop:
+    After adding the ETABSv1.dll COM reference in Visual Studio,
+    an Interop.ETABSv1.dll is generated automatically.
+    Reference it here if you choose explicit (early-bound) interop:
+
+    <ItemGroup>
+      <COMReference Include="ETABSv1">
+        <Guid>{your-etabs-guid}</Guid>
+        <VersionMajor>18</VersionMajor>
+        <VersionMinor>0</VersionMinor>
+        <Lcid>0</Lcid>
+        <WrapperTool>tlbimp</WrapperTool>
+        <Isolated>false</Isolated>
+      </COMReference>
+    </ItemGroup>
+  -->
+
+</Project>
