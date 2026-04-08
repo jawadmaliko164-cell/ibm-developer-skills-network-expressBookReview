@@ -1,0 +1,8 @@
+theia@theia-abdulrahm296:/home/project$ 
+curl http://localhost:5000/author/Chinua%20Achebe
+[
+    {
+        "author": "Chinua Achebe",
+        "title": "Things Fall Apart",
+        "reviews": {}
+    }
