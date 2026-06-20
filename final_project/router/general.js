@@ -4,7 +4,6 @@ let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
-
 public_users.post("/register", (req,res) => {
   //Write your code here
   return res.status(300).json({message: "Yet to be implemented"});
@@ -24,9 +23,17 @@ public_users.get('/isbn/:isbn',function (req, res) {
  });
   
 // Get book details based on author
-public_users.get('/author/:author',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+public_users.get('/author/:author', function (req, res) {
+    const authorName = req.params.author;
+    const result = {};
+
+    Object.keys(books).forEach((key) => {
+        if (books[key].author === authorName) {
+            result[key] = books[key];
+        }
+    });
+
+    res.json(result);
 });
 
 // Get all books based on title
