@@ -1,43 +1,138 @@
 const express = require('express');
+const axios = require('axios');
 let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
+public_users.post("/register", (req, res) => {
 
-public_users.post("/register", (req,res) => {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+        return res.status(400).json({
+            message: "Username and password are required"
+        });
+    }
+
+    if (isValid(username)) {
+
+        users.push({
+            username,
+            password
+        });
+
+        return res.status(200).json({
+            message: "User successfully registered."
+        });
+
+    }
+
+    return res.status(409).json({
+        message: "Username already exists."
+    });
+
 });
 
-// Get the book list available in the shop
-public_users.get('/',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+// Internal route to return the book list directly
+public_users.get('/books', function (req, res) {
+  return res.status(200).json(books);
+});
+
+// Get the book list available in the shop using Axios
+public_users.get('/', async function (req, res) {
+  try {
+    const response = await axios.get('http://localhost:5000/books');
+    return res.status(200).json(response.data);
+  } catch (error) {
+    return res.status(500).json({ message: 'Unable to fetch book list' });
+  }
 });
 
 // Get book details based on ISBN
-public_users.get('/isbn/:isbn',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
- });
+public_users.get('/books/isbn/:isbn', async function (req, res) {
+  const isbnNo = req.params.isbn;
+
+  try {
+    const response = await axios.get('http://localhost:5000/books');
+    const book = response.data[isbnNo];
+
+    if (!book) {
+      return res.status(404).json({ message: 'Book not found.' });
+    }
+
+    return res.status(200).json(book);
+  } catch (error) {
+    return res.status(500).json({ message: 'Unable to fetch book details.' });
+  }
+});
   
 // Get book details based on author
-public_users.get('/author/:author',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+public_users.get('/books/author/:author', async function (req, res) {
+  const authorName = req.params.author;
+
+  try {
+    const response = await axios.get('http://localhost:5000/books');
+    const booksData = response.data;
+    const result = {};
+
+    Object.keys(booksData).forEach((key) => {
+      if (booksData[key].author === authorName) {
+        result[key] = booksData[key];
+      }
+    });
+
+    if (Object.keys(result).length === 0) {
+      return res.status(404).json({ message: 'No books found for this author.' });
+    }
+
+    return res.status(200).json(result);
+  } catch (error) {
+    return res.status(500).json({ message: 'Unable to fetch book details by author.' });
+  }
 });
 
-// Get all books based on title
-public_users.get('/title/:title',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+// Get book details based on title
+public_users.get('/books/title/:title', async function (req, res) {
+  const titleName = req.params.title;
+
+  try {
+    const response = await axios.get('http://localhost:5000/books');
+    const booksData = response.data;
+    const result = {};
+
+    Object.keys(booksData).forEach((key) => {
+      if (booksData[key].title === titleName) {
+        result[key] = booksData[key];
+      }
+    });
+
+    if (Object.keys(result).length === 0) {
+      return res.status(404).json({ message: 'No books found for this title.' });
+    }
+
+    return res.status(200).json(result);
+  } catch (error) {
+    return res.status(500).json({ message: 'Unable to fetch book details by title.' });
+  }
 });
 
 //  Get book review
 public_users.get('/review/:isbn',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  const isbnNo = req.params.isbn;
+  const book = books[isbnNo];
+
+  if (!book) {
+    return res.status(404).json({ message: "Book not found." });
+  }
+
+  const reviews = book.reviews;
+
+  if (!reviews || Object.keys(reviews).length === 0) {
+    return res.json({ message: "No reviews found for this book." });
+  }
+
+  return res.json(reviews);
 });
 
 module.exports.general = public_users;
