@@ -50,23 +50,6 @@ public_users.get('/', async function (req, res) {
 });
 
 // Get book details based on ISBN
-public_users.get('/isbn/:isbn', async function (req, res) {
-  const isbnNo = req.params.isbn;
-
-  try {
-    const response = await axios.get('http://localhost:5000/books');
-    const book = response.data[isbnNo];
-
-    if (!book) {
-      return res.status(404).json({ message: 'Book not found.' });
-    }
-
-    return res.status(200).json(book);
-  } catch (error) {
-    return res.status(500).json({ message: 'Unable to fetch book details.' });
-  }
-});
-
 public_users.get('/books/isbn/:isbn', async function (req, res) {
   const isbnNo = req.params.isbn;
 
@@ -85,17 +68,28 @@ public_users.get('/books/isbn/:isbn', async function (req, res) {
 });
   
 // Get book details based on author
-public_users.get('/author/:author', function (req, res) {
-    const authorName = req.params.author;
+public_users.get('/books/author/:author', async function (req, res) {
+  const authorName = req.params.author;
+
+  try {
+    const response = await axios.get('http://localhost:5000/books');
+    const booksData = response.data;
     const result = {};
 
-    Object.keys(books).forEach((key) => {
-        if (books[key].author === authorName) {
-            result[key] = books[key];
-        }
+    Object.keys(booksData).forEach((key) => {
+      if (booksData[key].author === authorName) {
+        result[key] = booksData[key];
+      }
     });
 
-    res.json(result);
+    if (Object.keys(result).length === 0) {
+      return res.status(404).json({ message: 'No books found for this author.' });
+    }
+
+    return res.status(200).json(result);
+  } catch (error) {
+    return res.status(500).json({ message: 'Unable to fetch book details by author.' });
+  }
 });
 
 // Get all books based on title
