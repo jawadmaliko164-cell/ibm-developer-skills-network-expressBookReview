@@ -50,11 +50,39 @@ public_users.get('/', async function (req, res) {
 });
 
 // Get book details based on ISBN
-public_users.get('/isbn/:isbn',function (req, res) {
+public_users.get('/isbn/:isbn', async function (req, res) {
   const isbnNo = req.params.isbn;
-  res.send(books[isbnNo]);
-//   return res.status(300).json({message: "Yet to be implemented"});
- });
+
+  try {
+    const response = await axios.get('http://localhost:5000/books');
+    const book = response.data[isbnNo];
+
+    if (!book) {
+      return res.status(404).json({ message: 'Book not found.' });
+    }
+
+    return res.status(200).json(book);
+  } catch (error) {
+    return res.status(500).json({ message: 'Unable to fetch book details.' });
+  }
+});
+
+public_users.get('/books/isbn/:isbn', async function (req, res) {
+  const isbnNo = req.params.isbn;
+
+  try {
+    const response = await axios.get('http://localhost:5000/books');
+    const book = response.data[isbnNo];
+
+    if (!book) {
+      return res.status(404).json({ message: 'Book not found.' });
+    }
+
+    return res.status(200).json(book);
+  } catch (error) {
+    return res.status(500).json({ message: 'Unable to fetch book details.' });
+  }
+});
   
 // Get book details based on author
 public_users.get('/author/:author', function (req, res) {
