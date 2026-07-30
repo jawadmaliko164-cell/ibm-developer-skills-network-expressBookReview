@@ -1,4 +1,5 @@
 const express = require('express');
+const axios = require('axios');
 let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
@@ -132,104 +133,65 @@ public_users.get('/review/:isbn',function (req, res) {
   }
 });
 
-// Task 10: Get all books using async/await with Promise
+// Task 10: Get all books using async/await with Axios
 public_users.get('/async/books', async function (req, res) {
-  // Create a Promise that resolves with all books
-  let getBooks = new Promise((resolve, reject) => {
-    resolve(books);
-  });
-  
-  // Wait for the Promise to resolve
-  let allBooks = await getBooks;
-  
-  // Return the books
-  return res.send(allBooks);
-});
-
-// Task 11: Get book by ISBN using async/await with Promise
-public_users.get('/async/isbn/:isbn', async function (req, res) {
-  // Get the ISBN from request parameters
-  let isbn = req.params.isbn;
-  
-  // Convert ISBN to number
-  isbn = Number(isbn);
-  
-  // Create a Promise that resolves with the book
-  let getBook = new Promise((resolve, reject) => {
-    if(books[isbn]) {
-      resolve(books[isbn]);
-    } else {
-      reject("Book not found");
-    }
-  });
-  
   try {
-    // Wait for the Promise to resolve
-    let book = await getBook;
-    // Return the book
-    return res.send(book);
+    // Use Axios to get all books from the synchronous endpoint
+    let response = await axios.get('http://localhost:5000/');
+    // Return the books data
+    return res.send(response.data);
   } catch (error) {
-    // Return error if book not found
-    return res.status(404).json({message: error});
+    // Return error if request fails
+    return res.status(500).json({message: "Error fetching books"});
   }
 });
 
-// Task 12: Get books by author using async/await with Promise
-public_users.get('/async/author/:author', async function (req, res) {
-  // Get the author from request parameters
-  let author = req.params.author;
-  
-  // Create a Promise that resolves with matching books
-  let getBooksByAuthor = new Promise((resolve, reject) => {
-    let matchingBooks = [];
-    let bookKeys = Object.keys(books);
-    
-    for(let i = 0; i < bookKeys.length; i++) {
-      let key = bookKeys[i];
-      let book = books[key];
-      
-      if(book.author === author) {
-        matchingBooks.push(book);
-      }
+// Task 11: Get book by ISBN using async/await with Axios
+public_users.get('/async/isbn/:isbn', async function (req, res) {
+  try {
+    // Get the ISBN from request parameters
+    let isbn = req.params.isbn;
+    // Use Axios to get book by ISBN from the synchronous endpoint
+    let response = await axios.get('http://localhost:5000/isbn/' + isbn);
+    // Return the book data
+    return res.send(response.data);
+  } catch (error) {
+    // Return error if book not found or request fails
+    if(error.response && error.response.status === 404) {
+      return res.status(404).json({message: "Book not found"});
     }
-    
-    resolve(matchingBooks);
-  });
-  
-  // Wait for the Promise to resolve
-  let booksByAuthor = await getBooksByAuthor;
-  
-  // Return the matching books
-  return res.send(booksByAuthor);
+    return res.status(500).json({message: "Error fetching book"});
+  }
 });
 
-// Task 13: Get books by title using async/await with Promise
+// Task 12: Get books by author using async/await with Axios
+public_users.get('/async/author/:author', async function (req, res) {
+  try {
+    // Get the author from request parameters
+    let author = req.params.author;
+    // Use Axios to get books by author from the synchronous endpoint
+    let response = await axios.get('http://localhost:5000/author/' + author);
+    // Return the matching books data
+    return res.send(response.data);
+  } catch (error) {
+    // Return error if request fails
+    return res.status(500).json({message: "Error fetching books by author"});
+  }
+});
+
+// Task 13: Get books by title using async/await with Axios
 public_users.get('/async/title/:title', async function (req, res) {
-  // Get the title from request parameters
-  let title = req.params.title;
-  
-  // Create a Promise that resolves with matching books
-  let getBooksByTitle = new Promise((resolve, reject) => {
-    let matchingBooks = [];
-    let bookKeys = Object.keys(books);
-    
-    for(let i = 0; i < bookKeys.length; i++) {
-      let key = bookKeys[i];
-      let book = books[key];
-      
-      if(book.title === title) {
-        matchingBooks.push(book);
-      }
-    }
-    
-    resolve(matchingBooks);
-  });
-  
-  // Wait for the Promise to resolve
-  let booksByTitle = await getBooksByTitle;
-  
-  // Return the matching books
-  return res.send(booksByTitle);
+  try {
+    // Get the title from request parameters
+    let title = req.params.title;
+    // Use Axios to get books by title from the synchronous endpoint
+    let response = await axios.get('http://localhost:5000/title/' + title);
+    // Return the matching books data
+    return res.send(response.data);
+  } catch (error) {
+    // Return error if request fails
+    return res.status(500).json({message: "Error fetching books by title"});
+  }
 });
 
 module.exports.general = public_users;

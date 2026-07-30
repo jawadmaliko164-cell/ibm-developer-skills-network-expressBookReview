@@ -1,0 +1,2 @@
+curl -X DELETE "http://localhost:5000/customer/auth/review/1" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoidGVzdHBhc3MiLCJ1c2VybmFtZSI6InRlc3R1c2VyIiwiaWF0IjoxNzg1NDQ4MDg1LCJleHAiOjE3ODU0NTE2ODV9.dPqFGXH470_BNNrgexhdkJUFpf18VzQD5_q64R8Fb98"
+{"message":"Review deleted successfully"}
