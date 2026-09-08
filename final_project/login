@@ -1,0 +1,14 @@
+Login command
+==============
+
+curl.exe -X POST -H "Content-Type: application/json" -d '{"username":"jhocelbduga","password":"mypassword123"}' "http://localhost:5000/customer/login"
+
+Output
+======
+
+{
+  "message": "Login successful.",
+  "token": "<JWT_TOKEN>"
+}
+
+Note: The JWT token is generated dynamically and expires after one hour. Replace <JWT_TOKEN> with the token returned by the login request.
